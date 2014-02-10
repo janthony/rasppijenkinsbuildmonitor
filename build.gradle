@@ -1,0 +1,30 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = "1.7"
+
+repositories {
+    mavenCentral()
+    maven {
+        url = "http://www.mvnrepository.com"
+    }
+    maven {
+        url = "https://oss.sonatype.org/content/groups/public"
+    }
+}
+
+pi4jVersion = "0.0.5"
+httpComponentsVersion = "4.3.2"
+httpAsyncClientVersion = "4.0.0"
+httpCoreNioVersion = "4.3.1"
+commonsIOVersion = "2.4"
+quartzVersion = "2.2.1"
+
+dependencies {
+    compile group: 'org.apache.httpcomponents', version: httpComponentsVersion, name: 'httpclient'
+    compile group: 'org.apache.httpcomponents', version: httpAsyncClientVersion, name: 'httpasyncclient'
+    compile group: 'org.apache.httpcomponents', version: httpCoreNioVersion, name: 'httpcore-nio'
+    compile group: 'commons-io', version: commonsIOVersion, name: 'commons-io'
+    compile group: 'com.pi4j', version: pi4jVersion, name: 'pi4j-core'
+    compile group: 'org.quartz-scheduler', version: quartzVersion, name: 'quartz'
+}
