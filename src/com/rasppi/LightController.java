@@ -17,12 +17,13 @@ public class LightController {
     private static LightController instance = null;
     private static boolean green = false;
     private static boolean red = false;
+    private static boolean blinking = false;
 
     // Configure GPIO.
     private LightController(){
-//        gpio = GpioFactory.getInstance();
-//        redLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_04, "RED", PinState.HIGH); // Off state
-//        greenLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_06, "GREEN", PinState.HIGH); // Off state
+        gpio = GpioFactory.getInstance();
+        redLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_04, "RED", PinState.HIGH); // Off state
+        greenLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_06, "GREEN", PinState.HIGH); // Off state
     }
 
     public static LightController getLightControllerInstance(){
@@ -34,29 +35,45 @@ public class LightController {
     }
 
     public void toggleGreen(){
+        greenLightPin.toggle();
         this.green = !green;
         System.out.println(green);
     }
 
     public void toggleRed(){
+        redLightPin.toggle();
         this.red = !red;
         System.out.println(red);
     }
 
     public void startBlinking(){
+        if (!blinking){
+            redLightPin.pulse(1000);
+            greenLightPin.blink(1000);
+            blinking = true;
+        }
         System.out.println("Blinking");
     }
 
     public void stopBlinking(){
+        if (blinking){
+            redLightPin.clearProperties();
+            greenLightPin.clearProperties();
+        }
+        blinking = false;
         System.out.println("Stopped Blinking");
     }
 
     public void switchOffAll(){
+        redLightPin.clearProperties();
+        greenLightPin.clearProperties();
         System.out.println("Switching off");
     }
 
     public void stop(){
+        redLightPin.clearProperties();
+        greenLightPin.clearProperties();
         System.out.println("Stopped");
-//        gpio.shutdown();
+        gpio.shutdown();
     }
 }
