@@ -20,7 +20,7 @@ import java.io.InterruptedIOException;
  * Date: 7/02/2014
  * Time: 11:26 AM
  */
-public class JenkinsBuildMonitor{
+public class JenkinsBuildMonitor {
 
     private LightController lightController;
     private Scheduler scheduler;
