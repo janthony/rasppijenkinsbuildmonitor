@@ -4,6 +4,18 @@ apply plugin: 'application'
 sourceCompatibility = "1.7"
 mainClassName = "com.rasppi.JenkinsBuildMonitor"
 
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main'
+        }
+        resources {
+            srcDir 'src/resources'
+        }
+    }
+}
+
 repositories {
     mavenCentral()
     maven {
