@@ -48,9 +48,8 @@ public class LightController {
 
     public void startBlinking(){
         if (!blinking){
-            redLightPin.pulse(1000);
+            redLightPin.blink(1000);
             greenLightPin.blink(1000);
-            blinking = true;
         }
         System.out.println("Blinking");
     }
@@ -62,11 +61,8 @@ public class LightController {
     }
 
     public void stopBlinking(){
-        if (blinking){
-            redLightPin.clearProperties();
-            greenLightPin.clearProperties();
-        }
-        blinking = false;
+        redLightPin.clearProperties();
+        greenLightPin.clearProperties();
         System.out.println("Stopped Blinking");
     }
 
