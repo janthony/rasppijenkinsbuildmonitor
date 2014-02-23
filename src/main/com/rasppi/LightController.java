@@ -28,6 +28,7 @@ public class LightController {
 
     public static LightController getLightControllerInstance(){
         if (instance == null){
+           System.out.println("Making  a new light controller instance");
             instance = new LightController();
         }
 
