@@ -47,11 +47,8 @@ public class LightController {
     }
 
     public void startBlinking(){
-        if (!blinking){
-            redLightPin.blink(1000);
-            greenLightPin.blink(1000);
-        }
-        System.out.println("Blinking");
+        redLightPin.blink(1000);
+        greenLightPin.blink(1000);
     }
 
     public void switchOnBoth(){
@@ -60,9 +57,14 @@ public class LightController {
         System.out.println("Both on");
     }
 
+    public void switchOffBoth(){
+        greenLightPin.setState(PinState.HIGH); // off green
+        redLightPin.setState(PinState.HIGH); // switch on red
+        System.out.println("Both off");
+    }
+
     public void stopBlinking(){
-        redLightPin.clearProperties();
-        greenLightPin.clearProperties();
+        switchOffBoth();
         System.out.println("Stopped Blinking");
     }
 
