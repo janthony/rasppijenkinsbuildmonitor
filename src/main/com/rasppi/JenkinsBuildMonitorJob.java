@@ -66,14 +66,18 @@ public class JenkinsBuildMonitorJob implements Job {
                                 switch (BuildStatus.getBuildStatus(status)) {
                                     case BLUE_BUILDING:
                                         lightController.startBlinking();
+                                        break;
                                     case RED_BUILDING:
                                         lightController.startBlinking();
+                                        break;
                                     case STABLE:
                                         lightController.stopBlinking();
                                         lightController.switchOnGreen();
+                                        break;
                                     case BROKEN:
                                         lightController.stopBlinking();
                                         lightController.switchOnRed();
+                                        break;
                                     default:
                                         // Indicates an unknown state.
                                         //lightController.switchOnBoth();
