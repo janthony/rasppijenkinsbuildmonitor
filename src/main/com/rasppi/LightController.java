@@ -22,8 +22,8 @@ public class LightController {
     // Configure GPIO.
     private LightController(){
         gpio = GpioFactory.getInstance();
-        redLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_07, "RED", PinState.HIGH); // Off state
-        greenLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_12, "GREEN", PinState.HIGH); // Off state
+        redLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, "RED", PinState.HIGH); // Off state
+        greenLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "GREEN", PinState.HIGH); // Off state
     }
 
     public static LightController getLightControllerInstance(){
