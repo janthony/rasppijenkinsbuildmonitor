@@ -72,11 +72,11 @@ public class JenkinsBuildMonitorJob implements Job {
                                         break;
                                     case STABLE:
                                         lightController.stopBlinking();
-                                        //lightController.switchOnGreen();
+                                        lightController.switchOnGreen();
                                         break;
                                     case BROKEN:
                                         lightController.stopBlinking();
-                                        //lightController.switchOnRed();
+                                        lightController.switchOnRed();
                                         break;
                                     default:
                                         // Indicates an unknown state.
