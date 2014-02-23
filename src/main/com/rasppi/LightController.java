@@ -35,22 +35,22 @@ public class LightController {
     }
 
     public void switchOnGreen(){
-        greenLightPin.setState(PinState.HIGH); // switch off red
-        System.out.println("Green ON");
-    }
-
-    public void switchOffGreen(){
         greenLightPin.setState(PinState.LOW); // switch off red
         System.out.println("Green ON");
     }
 
+    public void switchOffGreen(){
+        greenLightPin.setState(PinState.HIGH); // switch off red
+        System.out.println("Green ON");
+    }
+
     public void switchOnRed(){
-        redLightPin.setState(PinState.HIGH); // switch on red
+        redLightPin.setState(PinState.LOW); // switch on red
         System.out.println("Red ON");
     }
 
     public void switchOffRed(){
-        redLightPin.setState(PinState.LOW); // switch on red
+        redLightPin.setState(PinState.HIGH); // switch on red
         System.out.println("Red ON");
     }
 
@@ -67,17 +67,18 @@ public class LightController {
     }
 
     public void switchOffBoth(){
-        if (blinking){
-            redLightPin.clearProperties();
-            greenLightPin.clearProperties();
-//            greenLightPin.setState(PinState.LOW); // off green
-//            redLightPin.setState(PinState.LOW); // switch on red
-        }
+        redLightPin.clearProperties();
+        greenLightPin.clearProperties();
+        greenLightPin.setState(PinState.HIGH); // off green
+        redLightPin.setState(PinState.HIGH); // switch on red
         System.out.println("Both off");
     }
 
     public void stopBlinking(){
-        switchOffBoth();
+        if (blinking){
+            switchOffBoth();
+            blinking = false;
+        }
         System.out.println("Stopped Blinking");
     }
 
