@@ -34,16 +34,16 @@ public class LightController {
         return instance;
     }
 
-    public void toggleGreen(){
-        greenLightPin.toggle();
-        this.green = !green;
-        System.out.println(green);
+    public void switchOnGreen(){
+        greenLightPin.setState(PinState.LOW); // on green
+        redLightPin.setState(PinState.HIGH); // switch off red
+        System.out.println("Green ON");
     }
 
-    public void toggleRed(){
-        redLightPin.toggle();
-        this.red = !red;
-        System.out.println(red);
+    public void switchOnRed(){
+        greenLightPin.setState(PinState.HIGH); // off green
+        redLightPin.setState(PinState.LOW); // switch on red
+        System.out.println("Red ON");
     }
 
     public void startBlinking(){
@@ -53,6 +53,12 @@ public class LightController {
             blinking = true;
         }
         System.out.println("Blinking");
+    }
+
+    public void switchOnBoth(){
+        greenLightPin.setState(PinState.LOW); // off green
+        redLightPin.setState(PinState.LOW); // switch on red
+        System.out.println("Both on");
     }
 
     public void stopBlinking(){
