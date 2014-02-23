@@ -45,12 +45,12 @@ public class LightController {
     }
 
     public void switchOnRed(){
-        redLightPin.setState(PinState.LOW); // switch on red
+        redLightPin.setState(PinState.HIGH); // switch on red
         System.out.println("Red ON");
     }
 
     public void switchOffRed(){
-        redLightPin.setState(PinState.HIGH); // switch on red
+        redLightPin.setState(PinState.LOW); // switch on red
         System.out.println("Red ON");
     }
 
@@ -70,8 +70,8 @@ public class LightController {
         if (blinking){
             redLightPin.clearProperties();
             greenLightPin.clearProperties();
-            greenLightPin.setState(PinState.HIGH); // off green
-            redLightPin.setState(PinState.HIGH); // switch on red
+//            greenLightPin.setState(PinState.LOW); // off green
+//            redLightPin.setState(PinState.LOW); // switch on red
         }
         System.out.println("Both off");
     }
