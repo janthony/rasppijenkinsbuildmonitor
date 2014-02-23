@@ -73,7 +73,7 @@ public class JenkinsBuildMonitorJob implements Job {
                                         lightController.switchOnRed();
                                     default:
                                         // Indicates an unknown state.
-                                        lightController.switchOnBoth();
+                                        //lightController.switchOnBoth();
                                 }
 
                             } catch (IOException e) {
