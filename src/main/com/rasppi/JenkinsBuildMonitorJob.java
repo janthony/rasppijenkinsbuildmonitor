@@ -62,6 +62,7 @@ public class JenkinsBuildMonitorJob implements Job {
 
                             try {
                                 String status = IOUtils.toString(response.getEntity().getContent());
+                                System.out.println("Status: " + status);
                                 switch (BuildStatus.getBuildStatus(status)) {
                                     case BUILDING:
                                         lightController.startBlinking();
