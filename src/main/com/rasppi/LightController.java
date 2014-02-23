@@ -56,9 +56,11 @@ public class LightController {
     }
 
     public void startBlinking(){
-        redLightPin.blink(1000);
-        greenLightPin.blink(1000);
-        blinking = true;
+        if (!blinking){
+            redLightPin.blink(1000);
+            greenLightPin.blink(1000);
+            blinking = true;
+        }
     }
 
     public void switchOnBoth(){
