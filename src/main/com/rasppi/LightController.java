@@ -70,8 +70,8 @@ public class LightController {
     public void switchOffBoth(){
         redLightPin.clearProperties();
         greenLightPin.clearProperties();
-        greenLightPin.setState(PinState.LOW); // off green
-        redLightPin.setState(PinState.LOW); // switch on red
+        greenLightPin.toggle();
+        redLightPin.toggle();
 
         System.out.println("Both off");
     }
