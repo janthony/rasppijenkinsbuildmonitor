@@ -1,5 +1,7 @@
 package com.rasppi;
 
+import com.rasppi.jobs.JenkinsBuildMonitorJob;
+import com.rasppi.jobs.LightingManagerJob;
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.impl.nio.DefaultHttpClientIODispatch;
 import org.apache.http.impl.nio.pool.BasicNIOConnPool;
@@ -13,6 +15,7 @@ import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,7 +25,7 @@ import java.io.InterruptedIOException;
  */
 public class JenkinsBuildMonitor {
 
-    private LightController lightController;
+    private RasppiLightController lightController;
     private Scheduler scheduler;
     private ConnectingIOReactor ioReactor;
 
@@ -78,34 +81,64 @@ public class JenkinsBuildMonitor {
         // Start the client thread
         t.start();
 
-        // Initialize scheduler factory.
+        // Setup the scheduled job to run.
+
+        ConcurrentLinkedDeque<String> messageQueue = new ConcurrentLinkedDeque<String>();
+
         JobDataMap jobData = new JobDataMap();
         jobData.put("jobStatus", "unknown");
         jobData.put("ioReactor", ioReactor);
         jobData.put("httpProc", httpproc);
         jobData.put("nioPool", pool);
+        jobData.put("msgQueue", messageQueue);
+        jobData.put("isDebug", false);
         SchedulerFactory sf = new StdSchedulerFactory();
         Scheduler scheduler = sf.getScheduler();
-        JobDetail job = JobBuilder.newJob(JenkinsBuildMonitorJob.class)
-                            .withIdentity("monitor", "jenkins")
-                            .setJobData(jobData)
-                            .build();
 
-        Trigger trigger = TriggerBuilder
-                            .newTrigger()
-                            .withIdentity("monitor","jenkins")
-                            .startNow()
-                            .withSchedule(SimpleScheduleBuilder
-                                    .repeatSecondlyForever(5))
-                            .build();
+        scheduleBuildMonitorJob(scheduler, jobData);
+        scheduleLightManagerJob(scheduler, jobData);
 
-        scheduler.scheduleJob(job, trigger);
         scheduler.start();
 
         // Start the service manager thread. This will manage shutting down the service on user keyboard interrupt.
         ServiceManager serviceManager = new ServiceManager(this);
         new Thread(serviceManager).start();
     }
+
+    private void scheduleBuildMonitorJob(Scheduler scheduler, JobDataMap jobData) throws SchedulerException {
+        JobDetail job = JobBuilder.newJob(JenkinsBuildMonitorJob.class)
+                .withIdentity("monitor", "jenkins")
+                .setJobData(jobData)
+                .build();
+
+        Trigger trigger = TriggerBuilder
+                .newTrigger()
+                .withIdentity("monitor","jenkins")
+                .startNow()
+                .withSchedule(SimpleScheduleBuilder
+                        .repeatSecondlyForever(5)) // Every 30 seconds.
+                .build();
+
+        scheduler.scheduleJob(job, trigger);
+    }
+
+    private void scheduleLightManagerJob(Scheduler scheduler, JobDataMap jobData) throws SchedulerException {
+        JobDetail job = JobBuilder.newJob(LightingManagerJob.class)
+                .withIdentity("monitor", "raspi")
+                .setJobData(jobData)
+                .build();
+
+        Trigger trigger = TriggerBuilder
+                .newTrigger()
+                .withIdentity("monitor","raspi")
+                .startNow()
+                .withSchedule(SimpleScheduleBuilder
+                        .repeatSecondlyForever(5)) // Every 30 seconds.
+                .build();
+
+        scheduler.scheduleJob(job, trigger);
+    }
+
 
     public void stop() throws IOException, SchedulerException {
         scheduler.shutdown();

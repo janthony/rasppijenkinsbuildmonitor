@@ -1,5 +1,6 @@
-package com.rasppi;
+package com.rasppi.jobs;
 
+import com.rasppi.RasppiLightController;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -16,7 +17,7 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import java.io.IOException;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -25,10 +26,12 @@ import java.util.concurrent.CountDownLatch;
  * Date: 9/02/2014
  */
 public class JenkinsBuildMonitorJob implements Job {
+
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
 
         JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
+        final ConcurrentLinkedDeque<String> msgQueue = (ConcurrentLinkedDeque<String>) jobDataMap.get("msgQueue");
         ConnectingIOReactor ioReactor = (ConnectingIOReactor) jobDataMap.get("ioReactor");
 
         // Create HTTP protocol processing chain
@@ -36,15 +39,15 @@ public class JenkinsBuildMonitorJob implements Job {
         // Create HTTP requester
         HttpAsyncRequester requester = new HttpAsyncRequester(httpproc);
         BasicNIOConnPool pool = (BasicNIOConnPool) jobDataMap.get("nioPool");
-        LightController lightController = (LightController) jobDataMap.get("lightController");
+        RasppiLightController lightController = (RasppiLightController) jobDataMap.get("lightController");
 
         // Execute HTTP GETs to the following hosts and
         HttpHost[] targets = new HttpHost[]{
-                new HttpHost("cubeclouddev.geoplex.net.au", 8080, "http")
+                new HttpHost("jenkins.cubecloud.com.au")
         };
         final CountDownLatch latch = new CountDownLatch(targets.length);
         for (final HttpHost target : targets) {
-            BasicHttpRequest request = new BasicHttpRequest("GET", "/job/cubecloud/api/xml?xpath=//color");
+            BasicHttpRequest request = new BasicHttpRequest("GET", "/job/Oscar.NET/api/xml?xpath=(//color)[1]");
             HttpCoreContext coreContext = HttpCoreContext.create();
             requester.execute(
                     new BasicAsyncRequestProducer(target, request),
@@ -53,39 +56,48 @@ public class JenkinsBuildMonitorJob implements Job {
                     coreContext,
                     // Handle HTTP response from a callback
                     new FutureCallback<HttpResponse>() {
+                        // TODO: Figure out a way to access the parent class properties. We should be able to insert this with references.
 
                         public void completed(final HttpResponse response) {
                             latch.countDown();
                             System.out.println(target + "->" + response.getStatusLine());
-
-                            LightController lightController = LightController.getLightControllerInstance();
-
                             try {
                                 String status = IOUtils.toString(response.getEntity().getContent());
-                                System.out.println("Status: " + status);
-                                switch (BuildStatus.getBuildStatus(status)) {
-                                    case BLUE_BUILDING:
-                                        lightController.startBlinking();
-                                        break;
-                                    case RED_BUILDING:
-                                        lightController.startBlinking();
-                                        break;
-                                    case STABLE:
-                                        lightController.stopBlinking();
-                                        lightController.switchOnGreen();
-                                        break;
-                                    case BROKEN:
-                                        lightController.stopBlinking();
-                                        lightController.switchOnRed();
-                                        break;
-                                    default:
-                                        // Indicates an unknown state.
-                                        //lightController.switchOnBoth();
-                                }
-
-                            } catch (IOException e) {
+                                System.out.println(status);
+                                msgQueue.add(status);
+                            }
+                            catch (Exception e){
                                 System.out.println(e);
                             }
+
+//                            RasppiLightController lightController = RasppiLightController.getLightControllerInstance();
+//
+//                            try {
+//                                String status = IOUtils.toString(response.getEntity().getContent());
+//                                System.out.println("Status: " + status);
+//                                switch (BuildStatus.getBuildStatus(status)) {
+//                                    case BLUE_BUILDING:
+//                                        lightController.startBlinking();
+//                                        break;
+//                                    case RED_BUILDING:
+//                                        lightController.startBlinking();
+//                                        break;
+//                                    case STABLE:
+//                                        lightController.stopBlinking();
+//                                        lightController.switchOnGreen();
+//                                        break;
+//                                    case BROKEN:
+//                                        lightController.stopBlinking();
+//                                        lightController.switchOnRed();
+//                                        break;
+//                                    default:
+//                                        // Indicates an unknown state.
+//                                        //lightController.switchOnBoth();
+//                                }
+//
+//                            } catch (IOException e) {
+//                                System.out.println(e);
+//                            }
                         }
 
                         public void failed(final Exception ex) {
