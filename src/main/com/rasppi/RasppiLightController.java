@@ -28,6 +28,8 @@ public class RasppiLightController implements LightController {
         gpio = GpioFactory.getInstance();
         redLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, "RED", PIN_STATE_ON); // ON state
         greenLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "GREEN", PIN_STATE_ON); // ON state
+        switchOffRed();
+        switchOffGreen();
     }
 
     public static RasppiLightController getLightControllerInstance(){
