@@ -17,6 +17,7 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CountDownLatch;
 
@@ -32,6 +33,7 @@ public class JenkinsBuildMonitorJob implements Job {
 
         JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
         final ConcurrentLinkedDeque<String> msgQueue = (ConcurrentLinkedDeque<String>) jobDataMap.get("msgQueue");
+        final Properties appProperties = (Properties) jobDataMap.get("appProperties");
         ConnectingIOReactor ioReactor = (ConnectingIOReactor) jobDataMap.get("ioReactor");
 
         // Create HTTP protocol processing chain
@@ -43,11 +45,11 @@ public class JenkinsBuildMonitorJob implements Job {
 
         // Execute HTTP GETs to the following hosts and
         HttpHost[] targets = new HttpHost[]{
-                new HttpHost("jenkins.cubecloud.com.au")
+                new HttpHost(appProperties.getProperty("jenkins.hostname"))
         };
         final CountDownLatch latch = new CountDownLatch(targets.length);
         for (final HttpHost target : targets) {
-            BasicHttpRequest request = new BasicHttpRequest("GET", "/job/Oscar.NET/api/xml?xpath=(//color)[1]");
+            BasicHttpRequest request = new BasicHttpRequest("GET", appProperties.getProperty("job.stattus.xpath"));
             HttpCoreContext coreContext = HttpCoreContext.create();
             requester.execute(
                     new BasicAsyncRequestProducer(target, request),

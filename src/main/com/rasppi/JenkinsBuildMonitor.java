@@ -13,8 +13,9 @@ import org.apache.http.nio.reactor.IOReactorException;
 import org.apache.http.protocol.*;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
-import java.io.IOException;
-import java.io.InterruptedIOException;
+
+import java.io.*;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -28,17 +29,23 @@ public class JenkinsBuildMonitor {
     private RasppiLightController lightController;
     private Scheduler scheduler;
     private ConnectingIOReactor ioReactor;
+    private Properties appProperties;
 
-    public static void main(String[] args) throws SchedulerException {
+    public static void main(String[] args) throws SchedulerException, IOException {
         JenkinsBuildMonitor monitor = new JenkinsBuildMonitor();
+        Properties appProperties = new Properties();
+        appProperties.load(JenkinsBuildMonitor.class.getResourceAsStream("/config/config.properties"));
+
         try {
-            monitor.init();
+            monitor.init(appProperties);
         } catch (IOReactorException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
-    public void init() throws SchedulerException, IOReactorException {
+    public void init(Properties appProperties) throws SchedulerException, IOReactorException {
+        this.appProperties = appProperties;
+
         // Initialize thredd pool.
         // Create HTTP protocol processing chain
         HttpProcessor httpproc = HttpProcessorBuilder.create()
@@ -91,7 +98,9 @@ public class JenkinsBuildMonitor {
         jobData.put("httpProc", httpproc);
         jobData.put("nioPool", pool);
         jobData.put("msgQueue", messageQueue);
-        jobData.put("isDebug", false);
+        jobData.put("isDebug", true);
+        jobData.put("appProperties", appProperties);
+
         SchedulerFactory sf = new StdSchedulerFactory();
         Scheduler scheduler = sf.getScheduler();
 
@@ -111,12 +120,14 @@ public class JenkinsBuildMonitor {
                 .setJobData(jobData)
                 .build();
 
+        int triggerInterval = Integer.parseInt(this.appProperties.getProperty("monitor.job.refresh.intervalInSeconds"));
+
         Trigger trigger = TriggerBuilder
                 .newTrigger()
                 .withIdentity("monitor","jenkins")
                 .startNow()
                 .withSchedule(SimpleScheduleBuilder
-                        .repeatSecondlyForever(5)) // Every 30 seconds.
+                        .repeatSecondlyForever(triggerInterval)) // Every 30 seconds.
                 .build();
 
         scheduler.scheduleJob(job, trigger);
@@ -128,12 +139,14 @@ public class JenkinsBuildMonitor {
                 .setJobData(jobData)
                 .build();
 
+        int triggerInterval = Integer.parseInt(this.appProperties.getProperty("lighiting.job.refresh.intervalInSeconds"));
+
         Trigger trigger = TriggerBuilder
                 .newTrigger()
                 .withIdentity("monitor","raspi")
                 .startNow()
                 .withSchedule(SimpleScheduleBuilder
-                        .repeatSecondlyForever(5)) // Every 30 seconds.
+                        .repeatSecondlyForever(triggerInterval)) // Every 30 seconds.
                 .build();
 
         scheduler.scheduleJob(job, trigger);
