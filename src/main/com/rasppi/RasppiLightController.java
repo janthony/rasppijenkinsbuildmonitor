@@ -19,8 +19,8 @@ public class RasppiLightController implements LightController{
     private static boolean red = false;
     private static boolean blinking = false;
 
-    private PinState PIN_STATE_ON = PinState.HIGH;
-    private PinState PIN_STATE_OFF = PinState.LOW;
+    private PinState PIN_STATE_ON = PinState.LOW;
+    private PinState PIN_STATE_OFF = PinState.HIGH;
 
 
     // Configure GPIO.
@@ -61,9 +61,9 @@ public class RasppiLightController implements LightController{
 
     public void startBlinking(){
         if (!blinking){
+            blinking = true;
             redLightPin.blink(1000);
             greenLightPin.blink(1000);
-            blinking = true;
         }
     }
 
