@@ -9,7 +9,7 @@ import com.pi4j.io.gpio.*;
  * Time: 4:25 PM
  * To change this template use File | Settings | File Templates.
  */
-public class RasppiLightController implements LightController{
+public class RasppiLightController implements LightController {
 
     private static GpioController gpio = null;
     private static GpioPinDigitalOutput redLightPin = null;
@@ -46,7 +46,7 @@ public class RasppiLightController implements LightController{
 
     public void switchOffGreen(){
         greenLightPin.setState(PIN_STATE_OFF); // switch off red
-        System.out.println("Green ON");
+        System.out.println("Green Off");
     }
 
     public void switchOnRed(){
@@ -56,7 +56,7 @@ public class RasppiLightController implements LightController{
 
     public void switchOffRed(){
         redLightPin.setState(PIN_STATE_OFF); // switch on red
-        System.out.println("Red ON");
+        System.out.println("Red Off");
     }
 
     public void startBlinking(){
@@ -74,8 +74,6 @@ public class RasppiLightController implements LightController{
     }
 
     public void switchOffBoth(){
-        switchOffRed();
-        switchOffGreen();
 //        redLightPin.clearProperties();
 //        greenLightPin.clearProperties();
 
@@ -83,8 +81,10 @@ public class RasppiLightController implements LightController{
     }
 
     public void stopBlinking(){
-        switchOffBoth();
-        blinking = false;
+        if (blinking){
+            switchOffBoth();
+            blinking = false;
+        }
         System.out.println("Stopped Blinking");
     }
 

@@ -35,6 +35,7 @@ public class LightingManagerJob implements Job {
 
         if (lastBuildEvent != null){
             // 2. When you have found tha lst message, use it to control the light.
+            System.out.println("Last build event is: " + lastBuildEvent);
             switch (BuildStatus.getBuildStatus(lastBuildEvent)) {
                 case ABORTED_BUILDING:
                     lightController.startBlinking();
@@ -46,6 +47,7 @@ public class LightingManagerJob implements Job {
                     lightController.startBlinking();
                     break;
                 case STABLE:
+                    System.out.println("Build is Stable");
                     lightController.stopBlinking();
                     lightController.switchOnGreen();
                     break;
@@ -57,9 +59,6 @@ public class LightingManagerJob implements Job {
                     lightController.stopBlinking();
                     lightController.switchOnRed();
                     break;
-                default:
-                    // Indicates an unknown state.
-                    //lightController.switchOnBoth();
             }
         }
     }
