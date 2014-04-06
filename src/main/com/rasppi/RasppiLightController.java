@@ -70,19 +70,17 @@ public class RasppiLightController implements LightController{
     }
 
     public void switchOffBoth(){
+        switchOffRed();
+        switchOffGreen();
         redLightPin.clearProperties();
         greenLightPin.clearProperties();
-        greenLightPin.toggle();
-        redLightPin.toggle();
 
         System.out.println("Both off");
     }
 
     public void stopBlinking(){
-        if (blinking){
-            switchOffBoth();
-            blinking = false;
-        }
+        switchOffBoth();
+        blinking = false;
         System.out.println("Stopped Blinking");
     }
 

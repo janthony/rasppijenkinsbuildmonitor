@@ -36,6 +36,9 @@ public class LightingManagerJob implements Job {
         if (lastBuildEvent != null){
             // 2. When you have found tha lst message, use it to control the light.
             switch (BuildStatus.getBuildStatus(lastBuildEvent)) {
+                case ABORTED_BUILDING:
+                    lightController.startBlinking();
+                    break;
                 case BLUE_BUILDING:
                     lightController.startBlinking();
                     break;
@@ -47,6 +50,10 @@ public class LightingManagerJob implements Job {
                     lightController.switchOnGreen();
                     break;
                 case BROKEN:
+                    lightController.stopBlinking();
+                    lightController.switchOnRed();
+                    break;
+                case ABORTED:
                     lightController.stopBlinking();
                     lightController.switchOnRed();
                     break;

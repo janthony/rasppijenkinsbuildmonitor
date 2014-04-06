@@ -14,8 +14,10 @@ import java.util.Map;
 public enum BuildStatus {
     STABLE ("<color>blue</color>"),
     BROKEN ("<color>red</color>"),
+    ABORTED ("<color>aborted</color>"),
     BLUE_BUILDING ("<color>blue_anime</color>"),
     RED_BUILDING ("<color>red_anime</color>"),
+    ABORTED_BUILDING ("<color>aborted_anime</color>"),
     UNKNOWN ("UNKNOWN");
 
     private final String buildStatus;
