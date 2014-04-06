@@ -34,7 +34,7 @@ public class JenkinsBuildMonitor {
     public static void main(String[] args) throws SchedulerException, IOException {
         JenkinsBuildMonitor monitor = new JenkinsBuildMonitor();
         Properties appProperties = new Properties();
-        appProperties.load(JenkinsBuildMonitor.class.getResourceAsStream("/config/config.properties"));
+        appProperties.load(JenkinsBuildMonitor.class.getResourceAsStream("/config.properties"));
 
         try {
             monitor.init(appProperties);
@@ -98,7 +98,7 @@ public class JenkinsBuildMonitor {
         jobData.put("httpProc", httpproc);
         jobData.put("nioPool", pool);
         jobData.put("msgQueue", messageQueue);
-        jobData.put("isDebug", true);
+        jobData.put("isDebug", Boolean.parseBoolean(appProperties.getProperty("isDebug")));
         jobData.put("appProperties", appProperties);
 
         SchedulerFactory sf = new StdSchedulerFactory();
