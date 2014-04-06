@@ -19,11 +19,15 @@ public class RasppiLightController implements LightController{
     private static boolean red = false;
     private static boolean blinking = false;
 
+    private PinState PIN_STATE_ON = PinState.HIGH;
+    private PinState PIN_STATE_OFF = PinState.LOW;
+
+
     // Configure GPIO.
     private RasppiLightController(){
         gpio = GpioFactory.getInstance();
-        redLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, "RED", PinState.HIGH); // Off state
-        greenLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "GREEN", PinState.HIGH); // Off state
+        redLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, "RED", PIN_STATE_ON); // ON state
+        greenLightPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "GREEN", PIN_STATE_ON); // ON state
     }
 
     public static RasppiLightController getLightControllerInstance(){
@@ -36,22 +40,22 @@ public class RasppiLightController implements LightController{
     }
 
     public void switchOnGreen(){
-        greenLightPin.setState(PinState.LOW); // switch off red
+        greenLightPin.setState(PIN_STATE_ON); // switch off red
         System.out.println("Green ON");
     }
 
     public void switchOffGreen(){
-        greenLightPin.setState(PinState.HIGH); // switch off red
+        greenLightPin.setState(PIN_STATE_OFF); // switch off red
         System.out.println("Green ON");
     }
 
     public void switchOnRed(){
-        redLightPin.setState(PinState.LOW); // switch on red
+        redLightPin.setState(PIN_STATE_ON); // switch on red
         System.out.println("Red ON");
     }
 
     public void switchOffRed(){
-        redLightPin.setState(PinState.HIGH); // switch on red
+        redLightPin.setState(PIN_STATE_OFF); // switch on red
         System.out.println("Red ON");
     }
 
@@ -64,16 +68,16 @@ public class RasppiLightController implements LightController{
     }
 
     public void switchOnBoth(){
-        greenLightPin.setState(PinState.LOW); // off green
-        redLightPin.setState(PinState.LOW); // switch on red
+        greenLightPin.setState(PIN_STATE_ON); // off green
+        redLightPin.setState(PIN_STATE_ON); // switch on red
         System.out.println("Both on");
     }
 
     public void switchOffBoth(){
         switchOffRed();
         switchOffGreen();
-        redLightPin.clearProperties();
-        greenLightPin.clearProperties();
+//        redLightPin.clearProperties();
+//        greenLightPin.clearProperties();
 
         System.out.println("Both off");
     }
